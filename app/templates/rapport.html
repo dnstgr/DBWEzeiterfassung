@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}Rapport - Zeiterfassung{% endblock %}
+
+{% block content %}
+<h2>Rapport</h2>
+
+<!-- Datumsauswahl -->
+<div class="rapport-filter">
+    <form method="GET" action="{{ url_for('main.rapport') }}" class="filter-form">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="date_from">Von:</label>
+                <input type="date" id="date_from" name="date_from" value="{{ date_from }}">
+            </div>
+            <div class="form-group">
+                <label for="date_to">Bis:</label>
+                <input type="date" id="date_to" name="date_to" value="{{ date_to }}">
+            </div>
+            <button type="submit" class="btn btn-primary">Anzeigen</button>
+        </div>
+    </form>
+</div>
+
+<!-- Rapport-Tabelle nach Tagen -->
+{% if days %}
+    {% for day, data in days.items() %}
+    <div class="rapport-day">
+        <h3 class="day-header">
+            {{ day }}
+            <span class="day-total">
+                Gesamt: {{ '%02d:%02d:%02d' | format(data.total_seconds // 3600, (data.total_seconds % 3600) // 60, data.total_seconds % 60) }}
+            </span>
+        </h3>
+        <table class="rapport-table">
+            <thead>
+                <tr>
+                    <th>Beschreibung</th>
+                    <th>Startzeit</th>
+                    <th>Endzeit</th>
+                    <th>Dauer</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in data.entries %}
+                <tr>
+                    <td>{{ entry.description }}</td>
+                    <td>{{ entry.start_time.strftime('%H:%M:%S') }}</td>
+                    <td>{{ entry.end_time.strftime('%H:%M:%S') if entry.end_time else '-' }}</td>
+                    <td>
+                        {% if entry.duration_seconds %}
+                            {{ '%02d:%02d:%02d' | format(entry.duration_seconds // 3600, (entry.duration_seconds % 3600) // 60, entry.duration_seconds % 60) }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endfor %}
+{% else %}
+    <p class="empty-message">Keine abgeschlossenen Eintr&auml;ge im gew&auml;hlten Zeitraum.</p>
+{% endif %}
+{% endblock %}

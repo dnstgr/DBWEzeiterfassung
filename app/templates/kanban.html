@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% block title %}Kanban-Board - Zeiterfassung{% endblock %}
+
+{% block content %}
+<h2>Kanban-Board</h2>
+
+<!--
+    Formular fuer neue Zeiteintraege.
+    Beim Absenden wird direkt ein neuer Datensatz erstellt und der Timer gestartet.
+-->
+<div class="new-entry-form">
+    <form method="POST" action="{{ url_for('main.create_entry') }}">
+        <div class="form-row">
+            <input type="text" name="description" placeholder="Beschreibung der T&auml;tigkeit..."
+                   required class="input-description">
+            <button type="submit" class="btn btn-primary">&#9654; Starten</button>
+        </div>
+    </form>
+</div>
+
+<div class="kanban-board">
+    <!-- Linke Spalte fuer aktuell laufende Eintraege -->
+    <div class="kanban-column">
+        <h3 class="column-header column-inprogress">&#9203; InProgress ({{ in_progress|length }})</h3>
+        {% if in_progress %}
+            {% for entry in in_progress %}
+            <div class="kanban-card card-inprogress">
+                <div class="card-header">
+                    <span class="card-description">{{ entry.description }}</span>
+                    <span class="card-timer" data-start="{{ entry.start_time.isoformat() }}"
+                          id="timer-{{ entry.id }}">00:00:00</span>
+                </div>
+                <div class="card-meta">
+                    <small>Gestartet: {{ entry.start_time.strftime('%d.%m.%Y %H:%M:%S') }}</small>
+                </div>
+                <div class="card-actions">
+                    <!-- Stoppt den laufenden Timer und verschiebt den Eintrag in Done -->
+                    <form method="POST" action="{{ url_for('main.stop_entry', entry_id=entry.id) }}" class="inline-form">
+                        <button type="submit" class="btn btn-stop" title="Timer stoppen">&#9632; Stopp</button>
+                    </form>
+
+                    <!-- Oeffnet das kleine Inline-Formular zum Bearbeiten -->
+                    <button class="btn btn-edit" onclick="toggleEdit({{ entry.id }})" title="Bearbeiten">&#9998; Bearbeiten</button>
+
+                    <!-- Loescht den Eintrag nach Bestaetigung im Browser -->
+                    <form method="POST" action="{{ url_for('main.delete_entry', entry_id=entry.id) }}" class="inline-form"
+                          onsubmit="return confirm('Eintrag wirklich löschen?');">
+                        <button type="submit" class="btn btn-delete" title="L&ouml;schen">&#10006; L&ouml;schen</button>
+                    </form>
+                </div>
+
+                <!-- Verstecktes Formular fuer das Umbenennen des Eintrags -->
+                <div class="edit-form" id="edit-{{ entry.id }}" style="display:none;">
+                    <form method="POST" action="{{ url_for('main.edit_entry', entry_id=entry.id) }}">
+                        <input type="text" name="description" value="{{ entry.description }}" required>
+                        <button type="submit" class="btn btn-primary btn-small">Speichern</button>
+                        <button type="button" class="btn btn-small" onclick="toggleEdit({{ entry.id }})">Abbrechen</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="empty-message">Keine laufenden Eintr&auml;ge.</p>
+        {% endif %}
+    </div>
+
+    <!-- Rechte Spalte fuer bereits abgeschlossene Eintraege -->
+    <div class="kanban-column">
+        <h3 class="column-header column-done">&#10003; Done ({{ done|length }})</h3>
+        {% if done %}
+            {% for entry in done %}
+            <div class="kanban-card card-done">
+                <div class="card-header">
+                    <span class="card-description">{{ entry.description }}</span>
+                    <span class="card-duration">
+                        {% if entry.duration_seconds %}
+                            {{ '%02d:%02d:%02d' | format(entry.duration_seconds // 3600, (entry.duration_seconds % 3600) // 60, entry.duration_seconds % 60) }}
+                        {% else %}
+                            --:--:--
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="card-meta">
+                    <small>
+                        {{ entry.start_time.strftime('%d.%m.%Y %H:%M') }} &ndash;
+                        {% if entry.end_time %}
+                            {{ entry.end_time.strftime('%H:%M') }}
+                        {% endif %}
+                    </small>
+                </div>
+                <div class="card-actions">
+                    <button class="btn btn-edit" onclick="toggleEdit({{ entry.id }})" title="Bearbeiten">&#9998; Bearbeiten</button>
+                    <form method="POST" action="{{ url_for('main.delete_entry', entry_id=entry.id) }}" class="inline-form"
+                          onsubmit="return confirm('Eintrag wirklich löschen?');">
+                        <button type="submit" class="btn btn-delete" title="L&ouml;schen">&#10006; L&ouml;schen</button>
+                    </form>
+                </div>
+                <div class="edit-form" id="edit-{{ entry.id }}" style="display:none;">
+                    <form method="POST" action="{{ url_for('main.edit_entry', entry_id=entry.id) }}">
+                        <input type="text" name="description" value="{{ entry.description }}" required>
+                        <button type="submit" class="btn btn-primary btn-small">Speichern</button>
+                        <button type="button" class="btn btn-small" onclick="toggleEdit({{ entry.id }})">Abbrechen</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="empty-message">Keine abgeschlossenen Eintr&auml;ge.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/timer.js') }}"></script>
+{% endblock %}

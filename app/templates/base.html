@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Zeiterfassung{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <a href="{{ url_for('main.index') }}">&#9201; Zeiterfassung</a>
+        </div>
+        <div class="nav-links">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('main.kanban') }}" class="{% if request.endpoint == 'main.kanban' %}active{% endif %}">Kanban</a>
+                <a href="{{ url_for('main.rapport') }}" class="{% if request.endpoint == 'main.rapport' %}active{% endif %}">Rapport</a>
+                <span class="nav-user">{{ current_user.username }}</span>
+                <a href="{{ url_for('auth.logout') }}" class="btn-logout">Abmelden</a>
+            {% else %}
+                <a href="{{ url_for('auth.login') }}">Anmelden</a>
+                <a href="{{ url_for('auth.register') }}">Registrieren</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Flash-Nachrichten -->
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash flash-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Seiteninhalt -->
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- JavaScript -->
+    {% block scripts %}{% endblock %}
+</body>
+</html>
