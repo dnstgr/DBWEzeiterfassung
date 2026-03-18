@@ -1,9 +1,9 @@
 # Zeiterfassung - Flask Webapplikation
 
-Eine einfache Zeiterfassungs-Webapplikation mit Flask und PostgreSQL.
+Meine erste Zeiterfassungs-Webapplikation mit Flask und PostgreSQL.
 Die Anwendung bietet eine Weboberflaeche im Kanban-Stil sowie eine kleine REST-API.
 
-## Funktionen
+# Funktionen
 
 - Kanban-Board mit zwei Spalten: "InProgress" und "Done"
 - Timer-Funktion mit automatischer Dauerberechnung
@@ -12,7 +12,7 @@ Die Anwendung bietet eine Weboberflaeche im Kanban-Stil sowie eine kleine REST-A
 - Benutzer-Authentifizierung mit Login und Registrierung
 - REST-API mit Bearer-Token
 
-## Technologie-Stack
+# Technologie-Stack
 
 - Python 3.9+
 - Flask
@@ -22,14 +22,7 @@ Die Anwendung bietet eine Weboberflaeche im Kanban-Stil sowie eine kleine REST-A
 - PostgreSQL
 - Gunicorn
 
-## Hinweise zur Bereinigung
-
-- Projektdatei mit externem Tool-Hinweis wurde entfernt
-- `.env` wurde nicht mit in die bereinigte Version uebernommen
-- Kommentare wurden ueberarbeitet und etwas ausfuehrlicher formuliert
-- Ein Fehler in der Timer-Anzeige im Frontend wurde korrigiert
-
-## Start im Entwicklungsmodus
+# Rtart im Entwicklungsmodus
 
 ```bash
 python run.py
