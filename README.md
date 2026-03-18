@@ -22,7 +22,7 @@ Die Anwendung bietet eine Weboberflaeche im Kanban-Stil sowie eine kleine REST-A
 - PostgreSQL
 - Gunicorn
 
-# Rtart im Entwicklungsmodus
+# Start im Entwicklungsmodus
 
 ```bash
 python run.py
