@@ -1,4 +1,6 @@
 # Zeiterfassung - Flask Webapplikation
+# Daniel Stäger
+# Modul DBWE HF IPSO
 
 Meine erste Zeiterfassungs-Webapplikation mit Flask und PostgreSQL.
 Die Anwendung bietet eine Weboberflaeche im Kanban-Stil sowie eine kleine REST-API.
